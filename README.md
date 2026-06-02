@@ -8,7 +8,7 @@ A Telegram bot that indexes media files from Telegram channels into MongoDB and 
 - **Full-text search** — MongoDB text index (with optional Atlas Search) plus a query sanitizer that normalizes `&`/`and`, punctuation, and separators for consistent matching.
 - **On-demand streaming** — FastAPI streams files directly from Telegram with HTTP `Range` support (1 MB chunks), so videos and audio can be played or downloaded without re-hosting.
 - **Web frontend** — Public browse/search UI and an admin panel for managing files, posters.
-- **Owner tools** — Stats, broadcast, log retrieval, cache clearing, channel allow-list management, and restart.
+- **Owner tools** — Stats, log retrieval, cache clearing, channel allow-list management, and restart.
 - **In-memory caching** — TTL caches (5 min) for auth, users, and media lists to reduce database load.
 
 ## Tech stack
