@@ -72,11 +72,9 @@ cp config.env.sample config.env
 | `OWNER_ID` | yes | Telegram user ID of the bot owner/admin. |
 | `BOT_USERNAME` | yes | Bot username (without `@`). |
 | `LOG_CHANNEL_ID` | yes | Channel ID for startup/auth logs. |
-| `MY_DOMAIN` | yes | Public domain of the web app. |
+| `API_BASE_URL` | yes | Public domain of the web app. |
 | `MONGO_URI` | yes | MongoDB connection string. |
 | `CF_DOMAIN` | no | Allowed CORS origin for the frontend. |
-| `API_BASE_URL` | no | Base URL used to build stream links. |
-| `MAX_FILES_PER_SESSION` | no | Max files per session (default `25`). |
 | `CONFIG_FILE_URL` | no | Remote URL to download `config.env` at startup. |
 
 ### Run locally
