@@ -23,7 +23,7 @@ load_dotenv('config.env', override=True)
 
 UPSTREAM_REPO = environ.get('UPSTREAM_REPO', '')
 if len(UPSTREAM_REPO) == 0:
-    UPSTREAM_REPO = "https://github.com/JohnyWalker167/index"
+    UPSTREAM_REPO = "https://github.com/jaungimein/index"
 
 GITHUB_TOKEN = environ.get('GITHUB_TOKEN', '')
 if GITHUB_TOKEN and 'github.com' in UPSTREAM_REPO:
