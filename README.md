@@ -7,7 +7,7 @@ A Telegram bot that indexes media files from Telegram channels into MongoDB and 
 - **Channel indexing** — Index, copy, update, and delete media (documents, videos, audio, photos) from allowed Telegram channels in bulk via owner commands.
 - **Full-text search** — MongoDB text index (with optional Atlas Search) plus a query sanitizer that normalizes `&`/`and`, punctuation, and separators for consistent matching.
 - **On-demand streaming** — FastAPI streams files directly from Telegram with HTTP `Range` support (1 MB chunks), so videos and audio can be played or downloaded without re-hosting.
-- **Web frontend** — Public browse/search UI and an admin panel for managing files, posters, and comments.
+- **Web frontend** — Public browse/search UI and an admin panel for managing files, posters.
 - **Owner tools** — Stats, broadcast, log retrieval, cache clearing, channel allow-list management, and restart.
 - **In-memory caching** — TTL caches (5 min) for auth, users, and media lists to reduce database load.
 
@@ -38,13 +38,13 @@ The bot and the FastAPI server run together in a single process (see `bot.py`), 
 |------|-------------|
 | `bot.py` | Entry point; starts the bot, FastAPI server, and the file-queue worker. |
 | `app.py` | Pyrogram `Bot` client, query sanitizer, and link encoding helpers. |
-| `fast_api.py` | FastAPI app: streaming, OTP auth, file details, comments, public listing. |
+| `fast_api.py` | FastAPI app: streaming, OTP auth, file details, public listing. |
 | `config.py` | Loads environment/config (optionally from a remote `CONFIG_FILE_URL`). |
 | `db.py` | MongoDB connection and collections; Atlas Search index notes. |
 | `cache.py` | TTL caches and cache invalidation. |
 | `handlers/owner.py` | Owner-only commands (`/index`, `/copy`, `/update`, `/del`, `/stats`, etc.). |
 | `handlers/user.py` | `/start`, channel file ingestion, and member-update events. |
-| `handlers/admin.py` | `/api/admin/*` routes for managing files, posters, and comments. |
+| `handlers/admin.py` | `/api/admin/*` routes for managing files, posters. |
 | `static_frontend/` | Web UI (browse + admin). |
 | `Dockerfile` | Container build. |
 
@@ -124,7 +124,6 @@ docker run --env-file config.env -p 8000:8000 index-bot
 - `GET /api/user/verify` — Validate a bearer token.
 - `GET /api/others` — Paginated public file listing with search/sort.
 - `GET /api/file/{file_id}` — File details.
-- `GET|POST /api/comments` — List/create comments.
 - `/api/admin/*` — Owner-only management routes.
 
 ## License
