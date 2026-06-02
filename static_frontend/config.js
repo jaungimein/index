@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://upgraded-system-7vv7p54q5wrjfp99v-8000.app.github.dev';
+const API_BASE_URL = 'https://xerothermic-wilhelmina-hrdex-c964db43.koyeb.app';
 
 function showNotification(message, isError = false) {
     const n = document.getElementById('notification');
