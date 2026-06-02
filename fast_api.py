@@ -344,41 +344,5 @@ async def get_file_details(file_id: str):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid file ID")
 
 
-@api.post("/api/comments")
-async def create_comment(request: Request):
-    data = await request.json()
-    comment_text = data.get("comment")
-    user_name = "Anonymous"
-    if not comment_text:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Comment text cannot be empty.")
-
-    comment = {
-        "user_name": user_name,
-        "comment": comment_text,
-        "created_at": datetime.now(timezone.utc)
-    }
-    await comments_col.insert_one(comment)
-    return {"message": "Comment added successfully"}
-
-@api.get("/api/comments")
-async def get_comments(page: int = 1):
-    page_size = 5
-    skip = (page - 1) * page_size
-
-    comments = []
-    async for comment in comments_col.find().sort("_id", -1).skip(skip).limit(page_size):
-        comment["_id"] = str(comment["_id"])
-        comment["first_name"] = comment["user_name"]
-        comments.append(comment)
-
-    total_comments = await comments_col.count_documents({})
-
-    return {
-        "comments": comments,
-        "total_pages": (total_comments + page_size - 1) // page_size,
-        "current_page": page,
-        "total_comments": total_comments
-    }
-
 
 # api.mount("/", StaticFiles(directory="static_frontend", html=True), name="static")

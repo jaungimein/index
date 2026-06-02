@@ -130,17 +130,3 @@ async def get_admin_comments(page: int = 1, admin_id: int = Depends(get_current_
         "total_pages": total_pages,
         "current_page": page
     }
-
-@router.put("/comments/{comment_id}")
-async def update_comment(comment_id: str, data: dict, admin_id: int = Depends(get_current_admin)):
-    comment_text = data.get("comment")
-    if not comment_text:
-        raise HTTPException(status_code=400, detail="Comment text is required")
-    
-    await comments_col.update_one({"_id": ObjectId(comment_id)}, {"$set": {"comment": comment_text}})
-    return {"status": "success"}
-
-@router.delete("/comments/{comment_id}")
-async def delete_comment(comment_id: str, admin_id: int = Depends(get_current_admin)):
-    await comments_col.delete_one({"_id": ObjectId(comment_id)})
-    return {"status": "success"}
