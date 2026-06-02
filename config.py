@@ -52,18 +52,12 @@ BOT_TOKEN = os.getenv('BOT_TOKEN')
 
 OWNER_ID = int(os.getenv('OWNER_ID'))
 BOT_USERNAME = os.getenv('BOT_USERNAME')
-UPDATE_CHANNEL_ID = int(os.getenv('UPDATE_CHANNEL_ID', 0))
 LOG_CHANNEL_ID = int(os.getenv('LOG_CHANNEL_ID'))
-BACKUP_CHANNEL_LINK = os.getenv('BACKUP_CHANNEL_LINK', '')
 
-MY_DOMAIN = os.getenv('MY_DOMAIN')
 CF_DOMAIN = os.getenv('CF_DOMAIN')
 API_BASE_URL = os.getenv('API_BASE_URL')
 
-TOKEN_VALIDITY_SECONDS = 30 * 24 * 60 * 60  # 30 days
-
 MONGO_URI = os.getenv("MONGO_URI")
 
-MAX_FILES_PER_SESSION = int(os.getenv("MAX_FILES_PER_SESSION", "25"))
 
 

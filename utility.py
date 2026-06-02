@@ -23,7 +23,6 @@ from cache import auth_cache, user_cache
 # Constants & Globals
 # =========================
 
-TOKEN_VALIDITY_SECONDS = 24 * 60 * 60  # 24 hours
 AUTO_DELETE_SECONDS = 2 * 60
 
 logger = logging.getLogger(__name__)
