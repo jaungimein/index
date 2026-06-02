@@ -195,7 +195,7 @@ async def stream_file(file_link: str, request: Request):
 
 @api.get("/")
 async def root():
-    return HTMLResponse(content=open("static_frontend/index.html", "r").read())
+    return JSONResponse({"message": "👋 Hola Amigo!"})
 
 @api.post("/api/request-otp")
 async def request_otp(request: Request):
