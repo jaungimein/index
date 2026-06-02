@@ -25,9 +25,6 @@ from cache import invalidate_cache
 
 logger = logging.getLogger(__name__)
 
-broadcasting = False
-migration_in_progress = False
-
 @bot.on_message(filters.private & (filters.document | filters.video))
 async def del_file_handler(client, message):
     try:
