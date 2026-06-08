@@ -112,21 +112,4 @@ async def delete_file(file_id: str, admin_id: int = Depends(get_current_admin)):
     await files_col.delete_one({"_id": ObjectId(file_id)})
     return {"status": "success"}
 
-@router.get("/comments")
-async def get_admin_comments(page: int = 1, admin_id: int = Depends(get_current_admin)):
-    page_size = 10
-    skip = (page - 1) * page_size
-    
-    comments = []
-    async for comment in comments_col.find().sort("_id", -1).skip(skip).limit(page_size):
-        comment["_id"] = str(comment["_id"])
-        comments.append(comment)
-        
-    total_comments = await comments_col.count_documents({})
-    total_pages = (total_comments + page_size - 1) // page_size
-    
-    return {
-        "comments": comments,
-        "total_pages": total_pages,
-        "current_page": page
-    }
+

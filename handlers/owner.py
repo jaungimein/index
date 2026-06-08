@@ -5,8 +5,10 @@ import logging
 from bson import ObjectId
 from pyrogram import filters, enums
 from pyrogram.types import Message
+from pyrogram.errors import UserIsBlocked, InputUserDeactivated, PeerIdInvalid, UserIsBot
+from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 
-from config import OWNER_ID
+from config import OWNER_ID, LOG_CHANNEL_ID
 from db import files_col, allowed_channels_col, users_col, db
 import asyncio
 from utility import (
@@ -24,6 +26,8 @@ from app import bot
 from cache import invalidate_cache
 
 logger = logging.getLogger(__name__)
+
+broadcasting = False
 
 @bot.on_message(filters.private & (filters.document | filters.video))
 async def del_file_handler(client, message):
@@ -428,3 +432,75 @@ async def stats_command(client, message: Message):
     except Exception as e:
         logger.error(f"Error in stats_command: {e}")
         
+@bot.on_message(filters.command("broadcast") & filters.chat(LOG_CHANNEL_ID))
+async def broadcast_handler(client, message: Message):
+    global broadcasting
+    if message.reply_to_message:
+        if broadcasting:
+            await message.reply_text("already broadcasting")
+            return
+        users = await users_col.find({}, {"_id": 0, "user_id": 1}).to_list(length=None)
+        total_users = len(users)
+        sent_count = 0
+        failed_count = 0
+        removed_count = 0
+        broadcasting = True
+
+        status_message = await safe_api_call(lambda: message.reply_text(
+            f"📢 Broadcast in progress...\n\n"
+            f"👥 Total Users: {total_users}\n"
+            f"✅ Sent: {sent_count}\n"
+            f"❌ Failed: {failed_count}\n"
+            f"🗑️ Removed: {removed_count}",
+            reply_markup=InlineKeyboardMarkup(
+                [[InlineKeyboardButton("Cancel", callback_data="cancel_broadcast")]]
+            )
+        ))
+
+        for i, user in enumerate(users):
+            if not broadcasting:
+                await status_message.edit_text("📢 **Broadcast cancelled.**")
+                break
+            try:
+                msg = message.reply_to_message
+                await safe_api_call(lambda: msg.copy(user["user_id"]))
+                sent_count += 1
+            except (UserIsBlocked, InputUserDeactivated, PeerIdInvalid, UserIsBot):
+                await users_col.delete_one({"user_id": user["user_id"]})
+                removed_count += 1
+            except Exception as e:
+                failed_count += 1
+                logger.error(f"Error broadcasting to {user['user_id']}: {e}")
+
+            if i % 10 == 0:
+                await asyncio.sleep(3)
+                await safe_api_call(lambda: status_message.edit_text(
+                    f"📢 Broadcast in progress...\n\n"
+                    f"👥 Total Users: {total_users}\n"
+                    f"✅ Sent: {sent_count}\n"
+                    f"❌ Failed: {failed_count}\n"
+                    f"🗑️ Removed: {removed_count}",
+                    reply_markup=InlineKeyboardMarkup(
+                        [[InlineKeyboardButton("Cancel", callback_data="cancel_broadcast")]]
+                    )
+                ))
+        else:
+            await safe_api_call(lambda: status_message.edit_text(
+                f"✅ Broadcast finished!**\n\n"
+                f"👥 Total Users: {total_users}\n"
+                f"✅ Sent: {sent_count}\n"
+                f"❌ Failed: {failed_count}\n"
+                f"🗑️ Removed: {removed_count}"
+            ))
+
+        broadcasting = False
+
+
+@bot.on_callback_query(filters.regex("cancel_broadcast"))
+async def cancel_broadcast_handler(client, query):
+    global broadcasting
+    if broadcasting:
+        broadcasting = False
+        await query.answer("Cancelling broadcast...", show_alert=True)
+    else:
+        await query.answer("No broadcast in progress.", show_alert=True)
